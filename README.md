@@ -1,6 +1,6 @@
 # Product release API
 
-[![API CI](https://github.com/zumarzehgeer/api-design-v4/actions/workflows/ci.yml/badge.svg)](https://github.com/zumarzehgeer/api-design-v4/actions/workflows/ci.yml)
+[Build and PostgreSQL integration checks on the review branch](https://github.com/zumarzehgeer/api-design-v4/actions?query=branch%3Aportfolio%2Fbackend-showcase)
 
 A Node.js/TypeScript API for managing products, release updates and release notes. Register two synthetic accounts, create and publish a release, then verify that the second account cannot read or change it. PostgreSQL integration tests exercise the actual routes and migrations.
 
