@@ -1,0 +1,35 @@
+name: API CI
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  integration:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: release_demo
+          POSTGRES_PASSWORD: ci_only_password
+          POSTGRES_DB: release_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U release_demo -d release_test"
+          --health-interval 2s --health-timeout 5s --health-retries 20
+    env:
+      TEST_DATABASE_URL: postgresql://release_demo:ci_only_password@127.0.0.1:5432/release_test
+      DATABASE_URL: postgresql://release_demo:ci_only_password@127.0.0.1:5432/release_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run format:check
+      - run: npm run build
+      - run: npm test
+      - run: npm run db:migrate
+      - run: npm run test:smoke
+      - run: npm audit --audit-level=high
