@@ -41,7 +41,7 @@ npm test
 TEST_DATABASE_URL='postgresql://release_demo:local_demo_only@127.0.0.1:55432/release_demo' npm test
 ```
 
-`npm run test:smoke` starts the compiled server on port 3101, runs the same demo and stops the server. Run `npm run db:migrate` and `npm run build` first. It uses `DATABASE_URL` from your environment or `.env`, so target the local demo database. Like the standalone demo, it leaves two synthetic accounts.
+`npm run test:smoke` starts the compiled server on an available loopback port, waits for that child's readiness message, runs the same demo and stops the server. Run `npm run db:migrate` and `npm run build` first. It uses `DATABASE_URL` from your environment or `.env`, so target the local demo database. Like the standalone demo, it leaves two synthetic accounts.
 
 CI runs a clean install, TypeScript/client generation, 17 PostgreSQL integration cases, migrations, the compiled-server demo and an audit that fails on high/critical advisories. See [validation](docs/VALIDATION.md) for the checks actually performed.
 
