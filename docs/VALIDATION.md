@@ -18,3 +18,9 @@ Tests require `TEST_DATABASE_URL` explicitly and a loopback host. Each run uses 
 Remaining limits: no production deployment, cloud database test, reverse-proxy configuration, distributed rate limiting, load/concurrency benchmark, disaster recovery, token revocation or legacy-account authentication migration. Database row preservation does not establish compatibility for old bcrypt login data. The health endpoint is liveness-only. CI status must be checked on the published branch rather than inferred from these local results.
 
 Fresh checkout: `npm ci`, client generation/strict compilation, all 17 database tests, the compiled-server demo and audit passed without a `.env` file, with the documented database environment variables supplied. A formatter check caught a method-chain layout that required a second formatting pass; the corrected source passes `npm run format:check`.
+
+## Release review · 15 November 2026
+
+The review reproduced a false positive in the original smoke harness: an unrelated API on port 3101 could satisfy its requests while the intended child failed. The harness now starts the compiled child on an OS-assigned loopback port, requires that child's IPC readiness message and fails on premature child exit. A regression holds port 3101 with a disposable compatible stub, points the compiled child at an unavailable database, and confirms nonzero exit with zero requests to the unrelated server.
+
+After the fix, 17 PostgreSQL cases plus that smoke regression passed (18 total), as did the positive compiled-server demo on its assigned port, strict build, formatting and an audit with zero findings. No production service was exercised.
