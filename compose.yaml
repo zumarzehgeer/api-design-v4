@@ -1,0 +1,18 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: release_demo
+      POSTGRES_PASSWORD: local_demo_only
+      POSTGRES_DB: release_demo
+    ports:
+      - '127.0.0.1:55432:5432'
+    volumes:
+      - release_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U release_demo -d release_demo']
+      interval: 2s
+      timeout: 5s
+      retries: 20
+volumes:
+  release_data:

@@ -5,12 +5,12 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model Post {
@@ -44,6 +44,8 @@ model Product {
   belongsTo   User     @relation(fields: [belongsToId], references: [id])
   belongsToId String
   Update      Update[]
+
+  @@index([belongsToId, createdAt, id])
 }
 
 enum UPDATE_STATUS {
@@ -56,7 +58,7 @@ enum UPDATE_STATUS {
 model Update {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @default(now()) @updatedAt
 
   title   String        @db.VarChar(255)
   body    String
@@ -65,18 +67,22 @@ model Update {
   asset   String
 
   productId    String
-  product      Product       @relation(fields: [productId], references: [id])
+  product      Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
   updatePoints UpdatePoint[]
+
+  @@index([productId, createdAt, id])
 }
 
 model UpdatePoint {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @default(now()) @updatedAt
 
   name        String @db.VarChar(255)
   description String
 
   updateId String
-  update   Update @relation(fields: [updateId], references: [id])
+  update   Update @relation(fields: [updateId], references: [id], onDelete: Cascade)
+
+  @@index([updateId, createdAt, id])
 }
